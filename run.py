@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 # Import von notwendigen Biblitheken
 import time
 import cv2
@@ -150,3 +151,5 @@ def collect_data():
 pass
 collect_data()
 #Komponenten_test()
+
+print(1)
