@@ -63,27 +63,24 @@ GPIO.output(K12, GPIO.LOW)   # 3Y1 = LOW  ->  Grundstellung Zylinder A3
 GPIO.output(K13, GPIO.LOW)   # Anschluss S1,  Beschaltung siehe Bedienungsanleitung
 GPIO.output(K14, GPIO.LOW)   # Anschluss S2,  Beschaltung siehe Bedienungsanleitung
 
-cap = cv2.VideoCapture(0)
-
-
 
 def Komponenten_test():
-    print "Achtung, in 5 Sekunden beginnt der Test aller Komponenten"
+    print("Achtung, in 5 Sekunden beginnt der Test aller Komponenten")
     time.sleep(5)
 
     GPIO.output(K14, GPIO.HIGH)     # Strom auf Steuerleitung S2 des Förderbands und
     GPIO.output(K13, GPIO.LOW)      # Stromlos Steuerleiung S1 des Förderband. Somit läuft das Förderband im Linkslauf -> Siehe Bedienungsanleitung
 
-    print "Förderband Linkslauf"
+    print("Förderband Linkslauf")
 
 
 
     time.sleep(5)
-    print "Bitte die Lichtschranken am geünschten Zylinder abdecken, um diesen auszufahren. Achtung Verletzungsgefahr"
+    print("Bitte die Lichtschranken am geünschten Zylinder abdecken, um diesen auszufahren. Achtung Verletzungsgefahr")
     while True:
         time.sleep(0.1)
         if GPIO.input(K1) == GPIO.HIGH :                    # Wenn Lichtschranke 1 einen Gegenstand detektiert, dann
-            print "Gegenstand in Lichtschranke 1 erkannt"
+            print("Gegenstand in Lichtschranke 1 erkannt")
             GPIO.output(K9, GPIO.LOW)                       # wird 1Y1 stromlos gemacht
             GPIO.output(K10, GPIO.HIGH)                     # und 1Y2 mit Strom versorgt, so dass der Zylinder 1A ausfahren kann
 
@@ -94,7 +91,7 @@ def Komponenten_test():
 
 
         if GPIO.input(K2) == GPIO.HIGH :
-            print "Gegenstand in Lichtschranke 2 erkannt"
+            print("Gegenstand in Lichtschranke 2 erkannt")
             GPIO.output(K11, GPIO.HIGH)
 
 
@@ -103,7 +100,7 @@ def Komponenten_test():
 
 
         if GPIO.input(K3) == GPIO.HIGH :
-            print "Gegenstand in Lichtschranke 3 erkannt"
+            print("Gegenstand in Lichtschranke 3 erkannt")
             GPIO.output(K12, GPIO.HIGH)
 
 
@@ -114,42 +111,58 @@ def Komponenten_test():
         if GPIO.input(K3) == GPIO.HIGH and  GPIO.input(K2) == GPIO.HIGH:
             GPIO.output(K14, GPIO.LOW)
             GPIO.output(K13, GPIO.LOW)
-            print "Förderband aus"
+            print("Förderband aus")
 
         if GPIO.input(K2) == GPIO.HIGH and GPIO.input(K1) == GPIO.HIGH:
             GPIO.output(K14, GPIO.HIGH)
             GPIO.output(K13, GPIO.LOW)
-            print "Rechtslauf ein"
+            print("Rechtslauf ein")
 
 def collect_data():
     num = 1
-    ret, img = cap.read()
-	cv2.imshow('Frame', img)
+    
     GPIO.output(K14, GPIO.HIGH)     # Strom auf Steuerleitung S2 des Förderbands und
     GPIO.output(K13, GPIO.LOW)      # Stromlos Steuerleiung S1 des Förderband. Somit läuft das Förderband im Linkslauf -> Siehe Bedienungsanleitung
+    
+    cap = cv2.VideoCapture(0)
 
     while True:
-        time.sleep(0.1)
+        ret, img = cap.read()
+        cv2.imshow('Frame', img) 
         if GPIO.input(K3) == GPIO.HIGH:
-            print "Lichtschranke ausgelöst"
             
+            time.sleep(0)
+            
+            print("Lichtschranke ausgelöst")
             GPIO.output(K13, GPIO.LOW)
             GPIO.output(K14, GPIO.LOW)
             
-		    cv2.imwrite('/home/pi/images/'+str(num)+'.jpg', img)
-		    print('Bild ' +str(num)+ ' aufgenommen')
-		    num++
-		        
-		    GPIO.output(K14, GPIO.HIGH)     # Strom auf Steuerleitung S2 des Förderbands und
+            i=0
+            while i<10:
+                time.sleep(1)
+                ret, img = cap.read()
+                i=i+1
+            i=0
+            cv2.imshow('Frame', img) 
+            cv2.imwrite('/home/pi/images/'+str(num)+'.jpg', img)
+            print('Bild ' +str(num)+ ' aufgenommen')
+            
+            time.sleep(2)
+            
+            num = num +1
+
+            GPIO.output(K14, GPIO.HIGH)     # Strom auf Steuerleitung S2 des Förderbands und
             GPIO.output(K13, GPIO.LOW)      # Stromlos Steuerleiung S1 des Förderband. Somit läuft das Förderband im Linkslauf -> Siehe Bedienungsanleitung
-		    
-		    time.sleep(2)
-		        
-    cap.release
-    cv2.destroyAllWindows()
+            
+        if cv2.waitKey(1) & 0xFF == ord('y'):
+            GPIO.output(K13, GPIO.LOW)
+            GPIO.output(K14, GPIO.LOW)
+            break
                 
 pass
+
 collect_data()
+
+cv2.destroyAllWindows()
 #Komponenten_test()
 
-print(1)
