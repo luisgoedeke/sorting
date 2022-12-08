@@ -1,5 +1,6 @@
 import time
 import RPi.GPIO as GPIO
+# test
 
 class Machine:
     def __init__(self):
