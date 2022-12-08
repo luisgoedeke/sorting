@@ -1,5 +1,7 @@
 import time
+import cv2
 import RPi.GPIO as GPIO
+import datetime
 
 class Machine:
     def __init__(self):
@@ -148,34 +150,34 @@ class Machine:
         pass
 
     def pull_zyl_1(self):
-        
+
         GPIO.output(self.K9, GPIO.HIGH)
         GPIO.output(self.K10, GPIO.LOW)
         print("Zylinder 1 einfahren")
         pass
-    
+
     def pull_zyl_2(self):
 
         GPIO.output(self.K11, GPIO.LOW)
         print("Zylinder 2 einfahren")
         pass
-    
+
     def pull_zyl_3(self):
 
         GPIO.output(self.K12, GPIO.LOW)
         print("Zylinder 3 einfahren")
         pass
-    
+
     def ea_test(self):
         while not self.get_ls_1():
             time.sleep(1)
-    
+
         while not self.get_ls_2():
             time.sleep(1)
 
         while not self.get_ls_3():
             time.sleep(1)
-    
+
         self.start_belt_rl()
 
         time.sleep(10)
@@ -187,25 +189,70 @@ class Machine:
         time.sleep(10)
 
         self.push_zyl_1()
-    
+
         while not self.get_zyl_1():
             time.sleep(1)
-    
+
         self.pull_zyl_1()
 
         self.push_zyl_2()
-    
+
         while not self.get_zyl_2():
             time.sleep(1)
-    
+
         self.pull_zyl_2()
 
         self.push_zyl_3()
-    
+
         while not self.get_zyl_3():
             time.sleep(1)
-    
+
         self.pull_zyl_3()
 
         self.stop_belt()
-        
+
+        pass
+
+    def collect_data(self):
+        num = 1
+
+        self.start_belt_rl
+
+        cap = cv2.VideoCapture(0)
+
+        while True:
+            ret, img = cap.read()
+            cv2.imshow('Frame', img)
+            if self.get_ls_3:
+
+                print("Lichtschranke ausgelöst")
+                self.stop_belt
+
+                cv2.imshow('Frame', img)
+                cv2.imwrite('/home/pi/images/'+date.today()++'.jpg', img)
+                print('Bild ' +str(num)+ ' aufgenommen')
+
+                num = num +1
+
+                self.start_belt_rl
+
+            if cv2.waitKey(1) & 0xFF == ord('y'):
+                self.stop_belt
+                break
+
+    pass
+
+    def take_pictures(self):
+        num=0
+        cap = cv2.VideoCapture(0)
+        while True:
+            ret, img = cap.read()
+            cv2.imshow('Frame', img)
+            if cv2.waitKey(1) & 0xFF == ord('y'):
+                cv2.imwrite('/home/pi/images/kunststoff/ch/'+datetime.datetime.now().replace(microsecond=0).isoformat()+'.jpg', img)
+                print('Bild ' +str(num)+ ' aufgenommen')
+                num=num+1
+                print(num)
+
+            if cv2.waitKey(1) & 0xFF == ord('e'):
+                break
