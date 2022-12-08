@@ -100,3 +100,43 @@ class Machine:
         else:
             return False
         pass
+
+    def start_belt_rl(self):
+
+        GPIO.output(self.K14, GPIO.HIGH)
+        GPIO.output(self.K13, GPIO.LOW)
+            print("Rechtslauf ein")
+        pass
+
+    def start_belt_ll(self):
+
+        GPIO.output(self.K14, GPIO.HIGH)
+        GPIO.output(self.K13, GPIO.LOW)
+            print("Linkslauf ein")
+        pass
+
+    def stop_belt(self):
+
+        GPIO.output(self.K14, GPIO.LOW)
+        GPIO.output(self.K13, GPIO.LOW)
+            print("Förderband aus")
+        pass
+
+    def push_zyl_1(self):
+
+        GPIO.output(self.K9, GPIO.LOW)
+        GPIO.output(self.K10, GPIO.HIGH)
+            print("Zylinder 1 ausfahren")
+        pass
+
+    def push_zyl_2(self):
+
+        GPIO.output(self.K11, GPIO.HIGH)
+            print("Zylinder 2 ausfahren")
+        pass
+
+    def push_zyl_3(self):
+
+        GPIO.output(self.K12, GPIO.HIGH)
+            print("Zylinder 3 ausfahren")
+        pass
