@@ -1,6 +1,6 @@
 import time
 import RPi.GPIO as GPIO
-# test
+
 
 class Machine:
     def __init__(self):
@@ -61,6 +61,7 @@ class Machine:
     def get_ls_1(self):
         time.sleep(1)
         if GPIO.input(self.K1) == GPIO.HIGH :
+            print("Lichtschranke 1 ausgeloest")
             return True
         else:
             return False
@@ -68,6 +69,7 @@ class Machine:
 
     def get_ls_2(self):
         if GPIO.input(self.K2) == GPIO.HIGH :
+            print("Lichtschranke 2 ausgeloest")
             return True
         else:
             return False
@@ -75,6 +77,7 @@ class Machine:
 
     def get_ls_3(self):
         if GPIO.input(self.K3) == GPIO.HIGH :
+            print("Lichtschranke 3 ausgeloest")
             return True
         else:
             return False
@@ -82,6 +85,7 @@ class Machine:
 
     def get_zyl_1(self):
         if GPIO.input(self.K4) == GPIO.HIGH :
+            print("Zylinder 1 in Endlage")
             return True
         else:
             return False
@@ -89,6 +93,7 @@ class Machine:
 
     def get_zyl_2(self):
         if GPIO.input(self.K5) == GPIO.HIGH :
+            print("Zylinder 2 in Endlage")
             return True
         else:
             return False
@@ -97,6 +102,7 @@ class Machine:
     def get_zyl_3(self):
 
         if GPIO.input(self.K6) == GPIO.HIGH :
+            print("Zylinder 3 in Endlage")
             return True
         else:
             return False
