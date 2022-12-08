@@ -1,7 +1,6 @@
 import time
 import RPi.GPIO as GPIO
 
-
 class Machine:
     def __init__(self):
         #########################################################################################################
@@ -61,7 +60,7 @@ class Machine:
     def get_ls_1(self):
         time.sleep(1)
         if GPIO.input(self.K1) == GPIO.HIGH :
-            print("Lichtschranke 1 ausgeloest")
+            print("LS1 ein")
             return True
         else:
             return False
@@ -69,7 +68,7 @@ class Machine:
 
     def get_ls_2(self):
         if GPIO.input(self.K2) == GPIO.HIGH :
-            print("Lichtschranke 2 ausgeloest")
+            print("LS2 ein")
             return True
         else:
             return False
@@ -77,7 +76,7 @@ class Machine:
 
     def get_ls_3(self):
         if GPIO.input(self.K3) == GPIO.HIGH :
-            print("Lichtschranke 3 ausgeloest")
+            print("LS3 ein")
             return True
         else:
             return False
@@ -85,7 +84,7 @@ class Machine:
 
     def get_zyl_1(self):
         if GPIO.input(self.K4) == GPIO.HIGH :
-            print("Zylinder 1 in Endlage")
+            print("Zyl1 Endlage")
             return True
         else:
             return False
@@ -93,7 +92,7 @@ class Machine:
 
     def get_zyl_2(self):
         if GPIO.input(self.K5) == GPIO.HIGH :
-            print("Zylinder 2 in Endlage")
+            print("Zyl2 Endlage")
             return True
         else:
             return False
@@ -102,7 +101,7 @@ class Machine:
     def get_zyl_3(self):
 
         if GPIO.input(self.K6) == GPIO.HIGH :
-            print("Zylinder 3 in Endlage")
+            print("Zyl3 Endlage")
             return True
         else:
             return False
@@ -112,38 +111,101 @@ class Machine:
 
         GPIO.output(self.K14, GPIO.HIGH)
         GPIO.output(self.K13, GPIO.LOW)
-            print("Rechtslauf ein")
+        print("Rechtslauf ein")
         pass
 
     def start_belt_ll(self):
 
-        GPIO.output(self.K14, GPIO.HIGH)
-        GPIO.output(self.K13, GPIO.LOW)
-            print("Linkslauf ein")
+        GPIO.output(self.K13, GPIO.HIGH)
+        GPIO.output(self.K14, GPIO.LOW)
+        print("Linkslauf ein")
         pass
 
     def stop_belt(self):
 
         GPIO.output(self.K14, GPIO.LOW)
         GPIO.output(self.K13, GPIO.LOW)
-            print("Förderband aus")
+        print("Förderband aus")
         pass
 
     def push_zyl_1(self):
 
         GPIO.output(self.K9, GPIO.LOW)
         GPIO.output(self.K10, GPIO.HIGH)
-            print("Zylinder 1 ausfahren")
+        print("Zylinder 1 ausfahren")
         pass
 
     def push_zyl_2(self):
 
         GPIO.output(self.K11, GPIO.HIGH)
-            print("Zylinder 2 ausfahren")
+        print("Zylinder 2 ausfahren")
         pass
 
     def push_zyl_3(self):
 
         GPIO.output(self.K12, GPIO.HIGH)
-            print("Zylinder 3 ausfahren")
+        print("Zylinder 3 ausfahren")
         pass
+
+    def pull_zyl_1(self):
+        
+        GPIO.output(self.K9, GPIO.HIGH)
+        GPIO.output(self.K10, GPIO.LOW)
+        print("Zylinder 1 einfahren")
+        pass
+    
+    def pull_zyl_2(self):
+
+        GPIO.output(self.K11, GPIO.LOW)
+        print("Zylinder 2 einfahren")
+        pass
+    
+    def pull_zyl_3(self):
+
+        GPIO.output(self.K12, GPIO.LOW)
+        print("Zylinder 3 einfahren")
+        pass
+    
+    def ea_test(self):
+        while not self.get_ls_1():
+            time.sleep(1)
+    
+        while not self.get_ls_2():
+            time.sleep(1)
+
+        while not self.get_ls_3():
+            time.sleep(1)
+    
+        self.start_belt_rl()
+
+        time.sleep(10)
+
+        self.stop_belt()
+
+        self.start_belt_ll()
+
+        time.sleep(10)
+
+        self.push_zyl_1()
+    
+        while not self.get_zyl_1():
+            time.sleep(1)
+    
+        self.pull_zyl_1()
+
+        self.push_zyl_2()
+    
+        while not self.get_zyl_2():
+            time.sleep(1)
+    
+        self.pull_zyl_2()
+
+        self.push_zyl_3()
+    
+        while not self.get_zyl_3():
+            time.sleep(1)
+    
+        self.pull_zyl_3()
+
+        self.stop_belt()
+        
