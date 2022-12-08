@@ -170,5 +170,4 @@ pass
 
 test = Machine()
 
-while True:
-    print(test.get_ls_1())
+test.ea_test()
