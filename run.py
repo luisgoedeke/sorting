@@ -3,10 +3,12 @@
 
 
 # Import von notwendigen Biblitheken
+import sys
 import time
 import cv2
 import RPi.GPIO as GPIO        #Biblitheke, um die GPIO Pine per Programm ansprechen/auslesen zu können.
-from machine import Machine
+sys.path.insert(0, './modules')
+from machine import *
 
 
 #########################################################################################################
@@ -159,7 +161,7 @@ def collect_data():
             GPIO.output(K14, GPIO.LOW)
             break
 
-#pass
+pass
 
 #collect_data()
 
