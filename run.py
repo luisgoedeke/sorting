@@ -1,67 +1,67 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-#Test
+
 
 # Import von notwendigen Biblitheken
 import time
 import cv2
 import RPi.GPIO as GPIO        #Biblitheke, um die GPIO Pine per Programm ansprechen/auslesen zu können.
-
+from machine import Machine
 
 
 #########################################################################################################
 #Grundeinstellungen für die GPIOs
 
-GPIO.setmode(GPIO.BOARD)  #legt fest, wie die GPIO Pine im nachfolgenden Programm benannt werden müssen
-GPIO.setwarnings(False)   # Warnungen werden unterdrückt
+#GPIO.setmode(GPIO.BOARD)  #legt fest, wie die GPIO Pine im nachfolgenden Programm benannt werden müssen
+#GPIO.setwarnings(False)   # Warnungen werden unterdrückt
 #########################################################################################################
 
 # Inputs
 # GPIO Pins werden entsprechende Variablen zuweisen
 
-K1 = 23   #Lichtschranke 1 -> 1S1E
-K2 = 24   #Lichtschranke 2 -> 2S1E
-K3 = 7    #Lichtschranke 3 -> 3S1E
-K4 = 8    #Endlagensensor Zylinder 1 -> 1S2
-K5 = 10   #Endlagensensor Zylinder 2 -> 2S2
-K6 = 11   #Endlagensensor Zylinder 3 -> 3S2
+#K1 = 23   #Lichtschranke 1 -> 1S1E
+#K2 = 24   #Lichtschranke 2 -> 2S1E
+#K3 = 7    #Lichtschranke 3 -> 3S1E
+#K4 = 8    #Endlagensensor Zylinder 1 -> 1S2
+#K5 = 10   #Endlagensensor Zylinder 2 -> 2S2
+#K6 = 11   #Endlagensensor Zylinder 3 -> 3S2
 
 #Die jeweiligen Pins als Input zuweisen, außerdem softwaremaessige Verwendung der internern Pull-Down Widerstaende
 
-GPIO.setup(K1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(K2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(K3, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(K4, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(K5, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(K6, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#GPIO.setup(K1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#GPIO.setup(K2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#GPIO.setup(K3, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#GPIO.setup(K4, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#GPIO.setup(K5, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+#GPIO.setup(K6, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 # Outputs
 # GPIO Pins werden entsprechende Variablen zuweisen
 
-K9 =  12    #Relais  K9 wird über den GPIO12 angsteuert.
-K10 = 13    #Relais K10 wird über den GPIO13 angsteuert.
-K11 = 15    #Relais k11 wird über den GPIO15 angsteuert.
-K12 = 16    #Relais K12 wird über den GPIO16 angsteuert.
-K13 = 18    #Relais K13 wird über den GPIO18 angsteuert.
-K14 = 19    #Relais K14 wird über den GPIO19 angsteuert.
+#K9 =  12    #Relais  K9 wird über den GPIO12 angsteuert.
+#K10 = 13    #Relais K10 wird über den GPIO13 angsteuert.
+#K11 = 15    #Relais k11 wird über den GPIO15 angsteuert.
+#K12 = 16    #Relais K12 wird über den GPIO16 angsteuert.
+#K13 = 18    #Relais K13 wird über den GPIO18 angsteuert.
+#K14 = 19    #Relais K14 wird über den GPIO19 angsteuert.
 
 #Die jeweiligen Pins als Output festlegen
 
-GPIO.setup(K9,  GPIO.OUT)       #schaltet 5/2 Wegventil -> 1Y1
-GPIO.setup(K10, GPIO.OUT)       #chaltet 5/2 Wegventil -> 1Y2
-GPIO.setup(K11, GPIO.OUT)       #schaltet 5/2 Wegeventil mit Federrückstellung -> 2Y1
-GPIO.setup(K12, GPIO.OUT)       #schaltet 5/2 Wegeventil mit Federrückstellung -> 3Y1
-GPIO.setup(K13, GPIO.OUT)       #schaltetvS1 Steuerleitung Förderband, siehe Bedienungsanleitung
-GPIO.setup(K14, GPIO.OUT)       #schaltet S2 Steuerleitung Förderband, siehe Bedienungsanleitung
+#GPIO.setup(K9,  GPIO.OUT)       #schaltet 5/2 Wegventil -> 1Y1
+#GPIO.setup(K10, GPIO.OUT)       #chaltet 5/2 Wegventil -> 1Y2
+#GPIO.setup(K11, GPIO.OUT)       #schaltet 5/2 Wegeventil mit Federrückstellung -> 2Y1
+#GPIO.setup(K12, GPIO.OUT)       #schaltet 5/2 Wegeventil mit Federrückstellung -> 3Y1
+#GPIO.setup(K13, GPIO.OUT)       #schaltetvS1 Steuerleitung Förderband, siehe Bedienungsanleitung
+#GPIO.setup(K14, GPIO.OUT)       #schaltet S2 Steuerleitung Förderband, siehe Bedienungsanleitung
 
 #Initialisierung der Output GPIOs --> Aktoren in Grundstellung bringen
 
-GPIO.output(K9, GPIO.HIGH)   # 1Y1 = HIGH ->  Grundstellung Zylinder A1
-GPIO.output(K10, GPIO.LOW)   # 1Y2 = LOW  ->  Grundstellung Zylinder A1
-GPIO.output(K11, GPIO.LOW)   # 2Y1 = LOW  ->  Grundstellung Zylinder A2
-GPIO.output(K12, GPIO.LOW)   # 3Y1 = LOW  ->  Grundstellung Zylinder A3
-GPIO.output(K13, GPIO.LOW)   # Anschluss S1,  Beschaltung siehe Bedienungsanleitung
-GPIO.output(K14, GPIO.LOW)   # Anschluss S2,  Beschaltung siehe Bedienungsanleitung
+#GPIO.output(K9, GPIO.HIGH)   # 1Y1 = HIGH ->  Grundstellung Zylinder A1
+#GPIO.output(K10, GPIO.LOW)   # 1Y2 = LOW  ->  Grundstellung Zylinder A1
+#GPIO.output(K11, GPIO.LOW)   # 2Y1 = LOW  ->  Grundstellung Zylinder A2
+#GPIO.output(K12, GPIO.LOW)   # 3Y1 = LOW  ->  Grundstellung Zylinder A3
+#GPIO.output(K13, GPIO.LOW)   # Anschluss S1,  Beschaltung siehe Bedienungsanleitung
+#GPIO.output(K14, GPIO.LOW)   # Anschluss S2,  Beschaltung siehe Bedienungsanleitung
 
 
 def Komponenten_test():
@@ -159,9 +159,14 @@ def collect_data():
             GPIO.output(K14, GPIO.LOW)
             break
 
-pass
+#pass
 
-collect_data()
+#collect_data()
 
-cv2.destroyAllWindows()
+#cv2.destroyAllWindows()
 #Komponenten_test()
+
+test = Machine()
+
+while True:
+    print(test.get_ls_1())
