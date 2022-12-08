@@ -56,7 +56,7 @@ class Machine:
         GPIO.output(self.K13, GPIO.LOW)   # Anschluss S1,  Beschaltung siehe Bedienungsanleitung
         GPIO.output(self.K14, GPIO.LOW)   # Anschluss S2,  Beschaltung siehe Bedienungsanleitung
         pass
-    
+
     def get_ls_1(self):
         time.sleep(1)
         if GPIO.input(self.K1) == GPIO.HIGH :
@@ -65,36 +65,36 @@ class Machine:
             return False
         pass
 
-    def get_ls_2():
+    def get_ls_2(self):
         if GPIO.input(self.K2) == GPIO.HIGH :
             return True
         else:
             return False
         pass
 
-    def get_ls_3():
+    def get_ls_3(self):
         if GPIO.input(self.K3) == GPIO.HIGH :
             return True
         else:
             return False
         pass
 
-    def get_zyl_1():
+    def get_zyl_1(self):
         if GPIO.input(self.K4) == GPIO.HIGH :
             return True
         else:
             return False
         pass
 
-    def get_zyl_2():
+    def get_zyl_2(self):
         if GPIO.input(self.K5) == GPIO.HIGH :
             return True
         else:
             return False
         pass
 
-    def get_zyl_3():
-        
+    def get_zyl_3(self):
+
         if GPIO.input(self.K6) == GPIO.HIGH :
             return True
         else:
