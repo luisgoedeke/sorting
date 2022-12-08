@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
+#Test
 
 # Import von notwendigen Biblitheken
 import time
@@ -120,49 +120,48 @@ def Komponenten_test():
 
 def collect_data():
     num = 1
-    
+
     GPIO.output(K14, GPIO.HIGH)     # Strom auf Steuerleitung S2 des Förderbands und
     GPIO.output(K13, GPIO.LOW)      # Stromlos Steuerleiung S1 des Förderband. Somit läuft das Förderband im Linkslauf -> Siehe Bedienungsanleitung
-    
+
     cap = cv2.VideoCapture(0)
 
     while True:
         ret, img = cap.read()
-        cv2.imshow('Frame', img) 
+        cv2.imshow('Frame', img)
         if GPIO.input(K3) == GPIO.HIGH:
-            
+
             time.sleep(0)
-            
+
             print("Lichtschranke ausgelöst")
             GPIO.output(K13, GPIO.LOW)
             GPIO.output(K14, GPIO.LOW)
-            
+
             i=0
             while i<10:
                 time.sleep(1)
                 ret, img = cap.read()
                 i=i+1
             i=0
-            cv2.imshow('Frame', img) 
+            cv2.imshow('Frame', img)
             cv2.imwrite('/home/pi/images/'+str(num)+'.jpg', img)
             print('Bild ' +str(num)+ ' aufgenommen')
-            
+
             time.sleep(2)
-            
+
             num = num +1
 
             GPIO.output(K14, GPIO.HIGH)     # Strom auf Steuerleitung S2 des Förderbands und
             GPIO.output(K13, GPIO.LOW)      # Stromlos Steuerleiung S1 des Förderband. Somit läuft das Förderband im Linkslauf -> Siehe Bedienungsanleitung
-            
+
         if cv2.waitKey(1) & 0xFF == ord('y'):
             GPIO.output(K13, GPIO.LOW)
             GPIO.output(K14, GPIO.LOW)
             break
-                
+
 pass
 
 collect_data()
 
 cv2.destroyAllWindows()
 #Komponenten_test()
-
