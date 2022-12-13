@@ -2,6 +2,7 @@ import time
 import cv2
 import RPi.GPIO as GPIO
 import datetime
+import serial
 
 class Machine:
     def __init__(self):
@@ -130,6 +131,19 @@ class Machine:
         print("Förderband aus")
         pass
 
+    def start_ver(self):
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        usb_ard.write(b"start\n")
+
+
+    def stop_ver(self):
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        usb_ard.write(b"stop\n")
+
     def push_zyl_1(self):
 
         GPIO.output(self.K9, GPIO.LOW)
@@ -167,6 +181,7 @@ class Machine:
         GPIO.output(self.K12, GPIO.LOW)
         print("Zylinder 3 einfahren")
         pass
+
 
     def ea_test(self):
         while not self.get_ls_1():
@@ -252,7 +267,6 @@ class Machine:
                 cv2.imwrite('/home/pi/images/kunststoff/ch/'+datetime.datetime.now().replace(microsecond=0).isoformat()+'.jpg', img)
                 print('Bild ' +str(num)+ ' aufgenommen')
                 num=num+1
-                print(num)
 
             if cv2.waitKey(1) & 0xFF == ord('e'):
                 break
