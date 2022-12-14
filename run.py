@@ -15,24 +15,19 @@ test = Machine()
 
 while True:
 
-    auswahl = input("Willkommen im Hauptmenue!\n
-    Bitte waehlen sie eine Option:\n
-    1: Starten der Vereinzelung \n
-    2: Stoppen der Vereinzelung \n
-    3: Funktionstest der Maschine starten \n
-    4: Bilder aufnehmen \n)
+    auswahl = input("Willkommen im Hauptmenue! \n Bitte waehlen sie eine Option: \n 1: Starten der Vereinzelung \n 2: Stoppen der Vereinzelung \n 3: Funktionstest der Maschine starten \n 4: Bilder aufnehmen \n")
 
-    if auswahl == 1:
+    if auswahl == "1":
         test.start_ver()
 
-    if auswahl == 2:
+    if auswahl == "2":
         test.stop_ver()
 
-    if auswahl == 3:
+    if auswahl == "3":
         test.ea_test()
 
-    if auswahl == 4:
+    if auswahl == "4":
         test.take_pictures()
 
-    else
+    else:
         print("Sie haben keine gueltige Eingabe getroffen.")
