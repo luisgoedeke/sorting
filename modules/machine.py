@@ -60,7 +60,7 @@ class Machine:
         GPIO.output(self.K14, GPIO.LOW)   # Anschluss S2,  Beschaltung siehe Bedienungsanleitung
         pass
 
-    def get_ls_1(self):
+    def get_ls_1(self):                     #falls Lichtschranke1 ausgelöst wird, wird True und ein Text zurückgegeben
         time.sleep(1)
         if GPIO.input(self.K1) == GPIO.HIGH :
             print("LS1 ein")
@@ -69,7 +69,7 @@ class Machine:
             return False
         pass
 
-    def get_ls_2(self):
+    def get_ls_2(self):                     #falls Lichtschranke2 ausgelöst wird, wird True und ein Text zurückgegeben
         if GPIO.input(self.K2) == GPIO.HIGH :
             print("LS2 ein")
             return True
@@ -77,7 +77,7 @@ class Machine:
             return False
         pass
 
-    def get_ls_3(self):
+    def get_ls_3(self):                     #falls Lichtschranke3 ausgelöst wird, wird True und ein Text zurückgegeben
         if GPIO.input(self.K3) == GPIO.HIGH :
             print("LS3 ein")
             return True
@@ -85,7 +85,7 @@ class Machine:
             return False
         pass
 
-    def get_zyl_1(self):
+    def get_zyl_1(self):                    # Abfrage der Endlage des 1 Zylinders                    
         if GPIO.input(self.K4) == GPIO.HIGH :
             print("Zyl1 Endlage")
             return True
@@ -93,7 +93,7 @@ class Machine:
             return False
         pass
 
-    def get_zyl_2(self):
+    def get_zyl_2(self):                    # Abfrage der Endlage des 2 Zylinders 
         if GPIO.input(self.K5) == GPIO.HIGH :
             print("Zyl2 Endlage")
             return True
@@ -101,7 +101,7 @@ class Machine:
             return False
         pass
 
-    def get_zyl_3(self):
+    def get_zyl_3(self):                    # Abfrage der Endlage des 3 Zylinders 
 
         if GPIO.input(self.K6) == GPIO.HIGH :
             print("Zyl3 Endlage")
@@ -110,80 +110,80 @@ class Machine:
             return False
         pass
 
-    def start_belt_rl(self):
+    def start_belt_rl(self):                #Das Fließband startet mit Rechtslauf
 
         GPIO.output(self.K14, GPIO.HIGH)
         GPIO.output(self.K13, GPIO.LOW)
         print("Rechtslauf ein")
         pass
 
-    def start_belt_ll(self):
+    def start_belt_ll(self):                #Das Fließband startet mit Linkslauf
 
         GPIO.output(self.K13, GPIO.HIGH)
         GPIO.output(self.K14, GPIO.LOW)
         print("Linkslauf ein")
         pass
 
-    def stop_belt(self):
+    def stop_belt(self):                    #Das Fließband stoppt
 
         GPIO.output(self.K14, GPIO.LOW)
         GPIO.output(self.K13, GPIO.LOW)
         print("Förderband aus")
         pass
 
-    def start_ver(self):
+    def start_ver(self):                    #Start des Motors für die Vereinzelung
         usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
         time.sleep(1)
         usb_ard.flush()
         usb_ard.write(b"start\n")
 
 
-    def stop_ver(self):
+    def stop_ver(self):                     #Stopp des Motors für die Vereinzelung
         usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
         time.sleep(1)
         usb_ard.flush()
         usb_ard.write(b"stop\n")
 
-    def push_zyl_1(self):
+    def push_zyl_1(self):                   #Ausfahren des 1 Zylinders
 
         GPIO.output(self.K9, GPIO.LOW)
         GPIO.output(self.K10, GPIO.HIGH)
         print("Zylinder 1 ausfahren")
         pass
 
-    def push_zyl_2(self):
+    def push_zyl_2(self):                   #Ausfahren des 2 Zylinders
 
         GPIO.output(self.K11, GPIO.HIGH)
         print("Zylinder 2 ausfahren")
         pass
 
-    def push_zyl_3(self):
+    def push_zyl_3(self):                   #Ausfahren des 3 Zylinders
 
         GPIO.output(self.K12, GPIO.HIGH)
         print("Zylinder 3 ausfahren")
         pass
 
-    def pull_zyl_1(self):
+    def pull_zyl_1(self):                   #Einfahren des 1 Zylinders
 
         GPIO.output(self.K9, GPIO.HIGH)
         GPIO.output(self.K10, GPIO.LOW)
         print("Zylinder 1 einfahren")
         pass
 
-    def pull_zyl_2(self):
+    def pull_zyl_2(self):                   #Einfahren des 2 Zylinders
 
         GPIO.output(self.K11, GPIO.LOW)
         print("Zylinder 2 einfahren")
         pass
 
-    def pull_zyl_3(self):
+    def pull_zyl_3(self):                   #Einfahren des 3 Zylinders
 
         GPIO.output(self.K12, GPIO.LOW)
         print("Zylinder 3 einfahren")
         pass
 
 
-    def ea_test(self):
+    def ea_test(self):                      #Test aller Komponenten außer des Vereinzelungsmotors
         while not self.get_ls_1():
             time.sleep(1)
 
@@ -228,7 +228,7 @@ class Machine:
 
         pass
 
-    def collect_data(self):
+    def collect_data(self):                 #Automatische Erstellung der Bilder (Band hält an, Bild wird gemacht)
         num = 1
 
         self.start_belt_rl
@@ -244,7 +244,7 @@ class Machine:
                 self.stop_belt
 
                 cv2.imshow('Frame', img)
-                cv2.imwrite('/home/pi/images/'+date.today()++'.jpg', img)
+                cv2.imwrite('/home/pi/images/'+datetime.datetime.now().replace(microsecond=0).isoformat()+'.jpg', img)
                 print('Bild ' +str(num)+ ' aufgenommen')
 
                 num = num +1
@@ -257,7 +257,7 @@ class Machine:
 
     pass
 
-    def take_pictures(self):
+    def take_pictures(self):                # händische Erstellung der Bilder mit der Y Taste
         num=0
         cap = cv2.VideoCapture(0)
         while True:

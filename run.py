@@ -5,13 +5,15 @@
 # Import von notwendigen Biblitheken
 import sys
 import time
-import cv2
+import cv2                     #Bibliothek zum ansprechen der Kamera (Opencv)
 import RPi.GPIO as GPIO        #Biblitheke, um die GPIO Pine per Programm ansprechen/auslesen zu können.
 import serial
 sys.path.insert(0, './modules')
 from machine import *
 from datetime import date
 test = Machine()
+
+#Schleife zum ständigen wiederholen des Hauptmenues
 
 while True:
 
