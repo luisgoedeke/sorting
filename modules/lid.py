@@ -11,21 +11,21 @@ class Lid():  #Klasse zum Erstellen von Deckeln
 
 
 
-class Kronkorken(): #Klasse zum erstellen von Kronkorken, erbt von Klasse Lid
+class Kronkorken(Lid): #Klasse zum erstellen von Kronkorken, erbt von Klasse Lid
 
     def __init__(self, position_now):
         super().__init__(position_now) #Initalisieren über Eltern-Klasse (Lid)
 
 
     
-class Metall(): #Klasse zum erstellen von Metalldeckeln, erbt von Klasse Lid
+class Metall(Lid): #Klasse zum erstellen von Metalldeckeln, erbt von Klasse Lid
 
     def __init__(self, position_now):
         super().__init__(position_now) #Initalisieren über Eltern-Klasse (Lid)
 
 
 
-class Kunststoff(): #Klasse zum erstellen von Kunststoffdeckeln, erbt von Klasse Lid
+class Kunststoff(Lid): #Klasse zum erstellen von Kunststoffdeckeln, erbt von Klasse Lid
 
     def __init__(self, position_now):
         super().__init__(position_now) #Initalisieren über Eltern-Klasse (Lid)
