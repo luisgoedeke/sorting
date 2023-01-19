@@ -298,9 +298,23 @@ class Machine:
 
             if cv2.waitKey(1) & 0xFF == ord('e'):
                 break
+    pass
 
     def delay(self,duration_in_seconds):
         current_time = datetime.datetime.now()
         end_time = current_time + datetime.timedelta(0,duration_in_seconds)
         while current_time<end_time:
             current_time = datetime.datetime.now()
+    pass
+
+    def param_ver(self):
+        While True:
+            eingabe=input("Bitte geben Sie ihren Befehl ein, x zum verlassen!")
+            if eingabe == "x":
+                return
+            else:
+                usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+                time.sleep(1)
+                usb_ard.flush()
+                usb_ard.write(eingabe)
+    pass
