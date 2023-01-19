@@ -22,6 +22,7 @@ class Machine:
         self.K4 = 8    #Endlagensensor Zylinder 1 -> 1S2
         self.K5 = 10   #Endlagensensor Zylinder 2 -> 2S2
         self.K6 = 11   #Endlagensensor Zylinder 3 -> 3S2
+        self.K7 = 26  #Endlagensensor Zylinder 3 -> 3S2
         #Die jeweiligen Pins als Input zuweisen, außerdem softwaremaessige Verwendung der internern Pull-Down Widerstaende
 
         GPIO.setup(self.K1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -30,6 +31,7 @@ class Machine:
         GPIO.setup(self.K4, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(self.K5, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         GPIO.setup(self.K6, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(self.K7, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
         # Outputs
         # GPIO Pins werden entsprechende Variablen zuweisen
@@ -85,7 +87,15 @@ class Machine:
             return False
         pass
 
-    def get_zyl_1(self):                    # Abfrage der Endlage des 1 Zylinders                    
+    def get_ls_4(self):                     #falls Lichtschranke4 ausgelöst wird, wird True und ein Text zurückgegeben
+        if GPIO.input(self.K7) == GPIO.HIGH :
+            print("LS4 ein")
+            return True
+        else:
+            return False
+        pass
+
+    def get_zyl_1(self):                    # Abfrage der Endlage des 1 Zylinders
         if GPIO.input(self.K4) == GPIO.HIGH :
             print("Zyl1 Endlage")
             return True
@@ -93,7 +103,7 @@ class Machine:
             return False
         pass
 
-    def get_zyl_2(self):                    # Abfrage der Endlage des 2 Zylinders 
+    def get_zyl_2(self):                    # Abfrage der Endlage des 2 Zylinders
         if GPIO.input(self.K5) == GPIO.HIGH :
             print("Zyl2 Endlage")
             return True
@@ -101,7 +111,7 @@ class Machine:
             return False
         pass
 
-    def get_zyl_3(self):                    # Abfrage der Endlage des 3 Zylinders 
+    def get_zyl_3(self):                    # Abfrage der Endlage des 3 Zylinders
 
         if GPIO.input(self.K6) == GPIO.HIGH :
             print("Zyl3 Endlage")
@@ -257,6 +267,24 @@ class Machine:
 
     pass
 
+    def picture(self, index):                 #Automatische Erstellung der Bilder (Bild wird gemacht)
+
+
+        cap = cv2.VideoCapture(0)
+
+        while True:
+            ret, img = cap.read()
+            #cv2.imshow('Frame', img)
+            #cv2.imshow('Frame', img)
+            #cv2.imwrite('/home/pi/images/'+datetime.datetime.now().replace(microsecond=0).isoformat()+'.jpg', img)
+            print('Bild ' +str(index)+ ' aufgenommen')
+            return img
+
+    pass
+
+
+
+
     def take_pictures(self):                # händische Erstellung der Bilder mit der Y Taste
         num=0
         cap = cv2.VideoCapture(0)
@@ -270,3 +298,9 @@ class Machine:
 
             if cv2.waitKey(1) & 0xFF == ord('e'):
                 break
+
+    def delay(self,duration_in_seconds):
+        current_time = datetime.datetime.now()
+        end_time = current_time + datetime.timedelta(0,duration_in_seconds)
+        while current_time<end_time:
+            current_time = datetime.datetime.now()
