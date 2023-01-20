@@ -19,7 +19,7 @@ sorting = Sorting()
 
 while True:
 
-    auswahl = input("Willkommen im Hauptmenue! \n Bitte waehlen sie eine Option: \n 1: Starten der Vereinzelung \n 2: Stoppen der Vereinzelung \n 3: Funktionstest der Maschine starten \n 4: Bilder aufnehmen \n 5: Sortierung starten \n 6: Parameter der Vereinzelung anpassen \n")
+    auswahl = input("Willkommen im Hauptmenue! \n Bitte waehlen sie eine Option: \n 1: Starten der Vereinzelung \n 2: Stoppen der Vereinzelung \n 3: Funktionstest der Maschine starten \n 4: Bilder aufnehmen \n 5: Sortierung starten \n 6: Parameter der Vereinzelung anpassen \n 7: Band starten \n 8: Band stoppen \n")
 
     if auswahl == "1":
         test.start_ver()
@@ -37,7 +37,13 @@ while True:
         sorting.sort()
 
     elif auswahl == "6":
-        test.param_ver()    
+        test.param_ver()
+    
+    elif auswahl == "7":
+        test.start_belt_rl()
+        
+    elif auswahl == "8":
+        test.stop_belt()
 
     else:
         print("Sie haben keine gueltige Eingabe getroffen.")

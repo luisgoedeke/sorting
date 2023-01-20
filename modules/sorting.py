@@ -40,12 +40,18 @@ class Sorting:
                     while True:
                         if machine.get_ls_3():
                             machine.stop_belt()
-                            #machine.delay(2)
+                            machine.delay(2)
                             img = machine.picture(number) # Bild aufnehmen
                             
-
+                            machine.delay(3)
                             # Bild bearbeiten
-                            img = img[0:480, 104:584] #Bild zuschneiden
+                            while True:
+                                try:
+                                    img = img[0:480, 104:584] #Bild zuschneiden
+                                    break
+                                except:
+                                    img = machine.picture(number)
+                                    #img = img[0:480, 104:584]
 
                             lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
                             l_channel, a, b = cv2.split(lab)
@@ -109,6 +115,11 @@ class Sorting:
                                 #print("For file {}, the output is {}".format(file.stem, output_data))
                                 #print(output_data)
                                 print(output_data[0][0]/255*100,"% Kronkorken", output_data[0][1]/255*100,"% Metall", output_data[0][2]/255*100, "% Kunststoff")
+                                
+                                klasse = (output_data[0][0], output_data[0][1], output_data[0][2], 0)
+                                
+                                
+                                print(klasse)
 
                                 break
                             #machine.delay(5)
