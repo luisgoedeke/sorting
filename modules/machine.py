@@ -308,7 +308,7 @@ class Machine:
     pass
 
     def param_ver(self):
-        While True:
+        while True:
             eingabe=input("Bitte geben Sie ihren Befehl ein, x zum verlassen!")
             if eingabe == "x":
                 return
@@ -316,5 +316,5 @@ class Machine:
                 usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
                 time.sleep(1)
                 usb_ard.flush()
-                usb_ard.write(eingabe)
+                usb_ard.write(eingabe.encode())
     pass
