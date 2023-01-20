@@ -5,7 +5,7 @@ bool full_rot_allowed = false;
 int delaytime = 500;
 int steps = 1200;
 int times_angle_rot = 0;
-int times_full_rot = 0;
+int times_full_rot = 3600;
 int counter_full_rot = 0;
 int counter_angle_rot = 0;
 
@@ -104,46 +104,45 @@ void loop() {
     if (full_rot_allowed){
       for(int i=0; i<steps;i++){
         schritt_rl();
-        Serial.println("RL");
+        //Serial.println("RL");
       }
       
       delay(delaytime);
       
       for(int i=0; i<steps;i++){
         schritt_ll();
-        Serial.println("LL");
+        //Serial.println("LL");
       }
       
       delay(delaytime);
       
-      for(int i=0; i<times_full_rot;i++){
+      for(int i=0; i<times_full_rot*1600;i++){
         schritt_rl();
-        Serial.println("RLFull");
+        //Serial.println("RLFull");
       }
 
       delay(delaytime);
 
-      for(int i=0; i<times_full_rot;i++){
+      for(int i=0; i<times_full_rot*1600;i++){
         schritt_ll();
-        Serial.println("LLFull");
+        //Serial.println("LLFull");
       }
+
+      delay(delaytime);
       
     }else{
        for(int i=1; i<=steps; i++){
         schritt_rl();
-        Serial.println("RL");
+        //Serial.println("RL");
       }
       
       delay(delaytime);
       
       for(int i=1; i<=steps; i++){
         schritt_ll();
-        Serial.println("LL");
+        //Serial.println("LL");
       }
       delay(delaytime);
     }
   }
-
-
-
 }
