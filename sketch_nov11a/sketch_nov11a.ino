@@ -143,7 +143,4 @@ void loop() {
       delay(delaytime);
     }
   }
-
-
-
 }
