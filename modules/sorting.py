@@ -118,8 +118,26 @@ class Sorting:
                                 
                                 klasse = (output_data[0][0], output_data[0][1], output_data[0][2], 0)
                                 
-                                
                                 print(klasse)
+                                
+                                # Werte auf 0 und 1 bringen
+                                if klasse[0] > 180: # 180 entspricht ~70%
+                                    klasse=(1,0,0,0)
+                                    
+                                    
+                                if klasse[1] > 180: # 180 entspricht ~70%
+                                    klasse=(0,1,0,0)
+                                    
+                                if klasse[2] > 180: # 180 entspricht ~70%
+                                    klasse=(0,0,1,0)
+                                    
+                                else:
+                                    klasse = (0,0,0,1) # Klasse 4 (Ausschuss) zuordnen, falls keiner der drei Klassen größer 70%
+                                    
+                                # Zylinder 3 ausfahren, wenn Klasse 0 zugeordnet
+                                if klasse[0] =1:
+                                    push_zyl_3()
+                                    
 
                                 break
                             #machine.delay(5)
