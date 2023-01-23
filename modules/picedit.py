@@ -7,7 +7,7 @@ from skimage import color
 source = 'C:/Users/Luis/Pictures/Bilder'
 
 destination = 'C:/Users/Luis/Pictures/Bilder_bearbeitet_Threshold'
-
+#test
 test=1
 
 for dir1 in os.listdir(source):
