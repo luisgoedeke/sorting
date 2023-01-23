@@ -9,10 +9,13 @@ import sys
 import cv2                     #Bibliothek zum ansprechen der Kamera (Opencv)
 import RPi.GPIO as GPIO        #Biblitheke, um die GPIO Pine per Programm ansprechen/auslesen zu können.
 from machine import *
+from lid import *
 from datetime import date
 machine = Machine()
 import pathlib
 import tflite_runtime.interpreter as tflite
+import queue
+from threading import Thread
 
 
 # Anlegen eines Ordners mit Datum + Uhrzeit als Benennung
@@ -23,34 +26,47 @@ import tflite_runtime.interpreter as tflite
 
 # Index als Benennung der Deckel
 
+    
 class Sorting:
+        
+        def __init__(self,m):
+            self.q1 = queue.Queue()
+            self.q2 = queue.Queue()
+            self.q3 = queue.Queue()
+            self.machine = m
+            self.x = False
+            pass
+            
         def sort(self):
-                machine = Machine()
                 number = 0
+               
+                
+                
                 while True:
-                    machine.start_belt_rl()
+                    
+                    self.machine.start_belt_rl()
 
-                    machine.start_ver()
+                    self.machine.start_ver()
 
                     while True:
-                        if machine.get_ls_4():
-                            machine.stop_ver()
+                        if self.machine.get_ls_4():
+                            self.machine.stop_ver()
                             break
 
                     while True:
-                        if machine.get_ls_3():
-                            machine.stop_belt()
-                            machine.delay(2)
-                            img = machine.picture(number) # Bild aufnehmen
+                        if self.machine.get_ls_3():
+                            self.machine.stop_belt()
+                            self.machine.delay(2)
+                            img = self.machine.picture(number) # Bild aufnehmen
                             
-                            machine.delay(3)
+                            self.machine.delay(3)
                             # Bild bearbeiten
                             while True:
                                 try:
                                     img = img[0:480, 104:584] #Bild zuschneiden
                                     break
                                 except:
-                                    img = machine.picture(number)
+                                    img = self.machine.picture(number)
                                     #img = img[0:480, 104:584]
 
                             lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
@@ -94,7 +110,7 @@ class Sorting:
                             #print(output_details)
                             
                             
-                            machine.delay(1)
+                            self.machine.delay(1)
                                 
                             for file in pathlib.Path("/home/pi/images/Aufnahmen/").iterdir():
                                 
@@ -118,29 +134,99 @@ class Sorting:
                                 
                                 klasse = (output_data[0][0], output_data[0][1], output_data[0][2], 0)
                                 
-                                print(klasse)
+                         
                                 
                                 # Werte auf 0 und 1 bringen
                                 if klasse[0] > 180: # 180 entspricht ~70%
-                                    klasse=(1,0,0,0)
+                                    #klasse=(1,0,0,0)
+
+                                    self.q1.put(Kronkorken())
+                                   
                                     
+                                elif klasse[1] > 180: # 180 entspricht ~70%
+                                    self.q1.put(Metall())
                                     
-                                if klasse[1] > 180: # 180 entspricht ~70%
-                                    klasse=(0,1,0,0)
+                                
                                     
-                                if klasse[2] > 180: # 180 entspricht ~70%
-                                    klasse=(0,0,1,0)
+                                elif klasse[2] > 180: # 180 entspricht ~70%
+                                    self.q1.put(Kunststoff())
                                     
                                 else:
-                                    klasse = (0,0,0,1) # Klasse 4 (Ausschuss) zuordnen, falls keiner der drei Klassen größer 70%
+                                    self.q1.put(Ausschuss()) # Klasse 4 (Ausschuss) zuordnen, falls keiner der drei Klassen größer 70%
                                     
                                 # Zylinder 3 ausfahren, wenn Klasse 0 zugeordnet
-                                if klasse[0] =1:
-                                    push_zyl_3()
+                                a = self.q1.get()
+                                if a.get_pos_soll() == 1:
+                                    self.machine.push_zyl_3()
+                                    self.machine.delay(2)
+                                    self.machine.pull_zyl_3()
                                     
-
+                                else:
+                                    self.q2.put(a)
+                                    self.machine.start_belt_rl()
+                                    self.x = False
+                                    self.ls2()
+                                    if self.x:
+                                        self.ls1()
+                                
+        
                                 break
+                            
+                            
                             #machine.delay(5)
                             number = number +1
 
-                            break
+                            break                                    
+                                    
+                                    
+        def ls2(self):
+            print("ls2 ist gestartet")
+            while True:
+                if machine.get_ls_2():
+                    a = self.q2.get()
+                        
+                    if a.get_pos_soll()==2:
+                        print("ls2 if schleife")
+                        self.machine.push_zyl_2()
+                        self.machine.delay(2)
+                        self.machine.pull_zyl_2()
+                        break
+                    else:
+                        
+                        self.x = True
+                        
+                        print(self.x)
+                        print("ls2 else schleife")
+                        self.q3.put(a)
+                        break
+                    break
+                        
+                
+        def ls1(self):
+            print("start ls1 schleife")
+            while True:
+                
+                if machine.get_ls_1():
+                    print("ls1 if-verzweigung")
+                    b = self.q3.get()
+                    print(b.get_pos_soll())
+                        
+                    if b.get_pos_soll()==3:
+                        print("LS1 if schleife")
+                        self.machine.push_zyl_1()
+                        self.machine.delay(2)
+                        self.machine.pull_zyl_1()
+                        break
+                    break
+ 
+
+                        
+        #def start(self):
+            #thread_1 = Thread(target=self.sort)
+            #thread_2 = Thread(target=self.ls2)
+            #thread_3 = Thread(target=self.ls1)
+            
+            #thread_1.start()
+            #thread_2.start()
+            #thread_3.start()
+

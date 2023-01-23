@@ -63,7 +63,6 @@ class Machine:
         pass
 
     def get_ls_1(self):                     #falls Lichtschranke1 ausgelöst wird, wird True und ein Text zurückgegeben
-        time.sleep(1)
         if GPIO.input(self.K1) == GPIO.HIGH :
             print("LS1 ein")
             return True
