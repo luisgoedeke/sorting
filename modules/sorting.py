@@ -34,9 +34,9 @@ class Sorting:
             self.q2 = queue.Queue()
             self.q3 = queue.Queue()
             self.machine = m
-            print("Konst")
+            self.x = False
             pass
-        
+            
         def sort(self):
                 number = 0
                
@@ -163,7 +163,13 @@ class Sorting:
                                     
                                 else:
                                     self.q2.put(a)
-                                    
+                                    self.machine.start_belt_rl()
+                                    self.x = False
+                                    self.ls2()
+                                    if self.x:
+                                        self.ls1()
+                                
+        
                                 break
                             
                             
@@ -174,49 +180,53 @@ class Sorting:
                                     
                                     
         def ls2(self):
-            nummerls2 = 0
+            print("ls2 ist gestartet")
             while True:
-                
                 if machine.get_ls_2():
-                    a = self.q1.get()
-                    
-                    if a.get_pos_soll()==2:
-                        self.machine.push_zyl_2()
-                        self.time.sleep(2)
-                        self.machine.pull_zyl_2()
-                    else:
-                        q2.put(a)
+                    a = self.q2.get()
                         
-                #print("ls2 durchgelaufen")
-                time.sleep(0.1)
-                nummerls2 = nummerls2 + 1
-                print("Nummerls2= " + str(nummerls2))
+                    if a.get_pos_soll()==2:
+                        print("ls2 if schleife")
+                        self.machine.push_zyl_2()
+                        self.machine.delay(2)
+                        self.machine.pull_zyl_2()
+                        break
+                    else:
+                        
+                        self.x = True
+                        
+                        print(self.x)
+                        print("ls2 else schleife")
+                        self.q3.put(a)
+                        break
+                    break
                         
                 
         def ls1(self):
-            nummerls1 = 0
+            print("start ls1 schleife")
             while True:
-               
-                if self.machine.get_ls_1():
-                    
-                    c = self.q3.get()
-                    
-                    if c.get_pos_soll() == 3:
+                
+                if machine.get_ls_1():
+                    print("ls1 if-verzweigung")
+                    b = self.q3.get()
+                    print(b.get_pos_soll())
+                        
+                    if b.get_pos_soll()==3:
+                        print("LS1 if schleife")
                         self.machine.push_zyl_1()
                         self.machine.delay(2)
                         self.machine.pull_zyl_1()
-                    
-                #print("ls1 durchgelaufen")
-                time.sleep(0.1)
-                nummerls1 = nummerls1 + 1
-                print("Nummerls1= " + str(nummerls1))
+                        break
+                    break
+ 
+
                         
-        def start(self):
-            thread_1 = Thread(target=self.sort)
-            thread_2 = Thread(target=self.ls2)
-            thread_3 = Thread(target=self.ls1)
+        #def start(self):
+            #thread_1 = Thread(target=self.sort)
+            #thread_2 = Thread(target=self.ls2)
+            #thread_3 = Thread(target=self.ls1)
             
-            thread_1.start()
-            thread_2.start()
-            thread_3.start()
+            #thread_1.start()
+            #thread_2.start()
+            #thread_3.start()
 

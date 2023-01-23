@@ -19,8 +19,6 @@ sorting = Sorting(m)
 
 #Schleife zum ständigen wiederholen des Hauptmenues
 
-
-
 #deckel1 = Kunststoff()
 #deckel2 = Metall()
 #deckel3 = Kronkorken()
@@ -45,7 +43,7 @@ while True:
         m.take_pictures()
         
     elif auswahl == "5":
-        sorting.start()
+        sorting.sort()
 
     elif auswahl == "6":
         m.param_ver()
