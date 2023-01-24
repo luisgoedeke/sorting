@@ -6,8 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage import color
 import sys
-import cv2                     
-import RPi.GPIO as GPIO        
+import cv2
+import RPi.GPIO as GPIO
 from machine import *
 from lid import *
 from datetime import date
@@ -20,7 +20,7 @@ from threading import Thread
 
 
 class Sorting:
-        
+
         #initialisierung der Queues und Variablen
 
         def __init__(self,m):
@@ -29,33 +29,36 @@ class Sorting:
             self.q3 = queue.Queue()
             self.machine = m
             self.x = False
+            self.z1 = 0 #Zählervariable Anzahl Deckel Behälter 3 (Anzahl Ausfahren Zylinder 1)
+            self.z2 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 2)
+            self.z3 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 3)
             pass
 
         #Hauptprogramm zur Vereinzelung
 
         def sort(self):
-                number = 0
-            
+                number = 0 #Zählervariable zur Benennung der Deckel
+
                 while True:
-                    
+
                     self.machine.start_belt_rl()
                     self.machine.start_ver()
 
                     while True:
 
-                        if self.machine.get_ls_4():
-                            self.machine.stop_ver()
+                        if self.machine.get_ls_4(): # Ein Deckel ist aus der Vereinzelung gefallen
+                            self.machine.stop_ver() # Die Vereinzelung hält an
                             break
 
                     while True:
 
-                        if self.machine.get_ls_3():
-                            self.machine.stop_belt()
+                        if self.machine.get_ls_3():     # Der Deckel hat die Kamera erreicht (Lichtschranke 3)
+                            self.machine.stop_belt()    # Die Vereinzelung hält an
                             self.machine.delay(2)
                             img = self.machine.picture(number) # Bild aufnehmen
 
                             # Bild bearbeiten
-                            while True:   
+                            while True:
 
                                 try:
                                     img = img[0:480, 104:584] #Bild zuschneiden
@@ -81,8 +84,8 @@ class Sorting:
 
                             cv2.imwrite('/home/pi/images/Aufnahmen/' + str(number) + '.jpg',img) #Bild speichern
                             print("Bild bearbeitet")
-                            
-                            # Deckel erkennen 
+
+                            # Deckel erkennen
 
                             # Load TFLite model
                             interpreter = tflite.Interpreter(model_path="/home/pi/images/bilder bearbeitet/model.tflite")
@@ -92,28 +95,30 @@ class Sorting:
                             output_details = interpreter.get_output_details()
 
                             interpreter.allocate_tensors()
-                            
+
                             self.machine.delay(1)
-                                
+
+                            # Das aufgenommene Bild wird klassifiziert
+
                             for file in pathlib.Path("/home/pi/images/Aufnahmen/").iterdir():
-                                
+
                                 # Bild einlesen
                                 img = cv2.imread("/home/pi/images/Aufnahmen/"+ str(number)+ '.jpg'.format(file.resolve()))
 
                                 #Auflösung ändern
                                 new_img = cv2.resize(img, (224, 224))
-                                
+
                                 # input_details[0]['index'] = the index which accepts the input
                                 interpreter.set_tensor(input_details[0]['index'], [new_img])
-                                
+
                                 # run the inference
                                 interpreter.invoke()
-                                
+
                                 # output_details[0]['index'] = the index which provides the input
-                                output_data = interpreter.get_tensor(output_details[0]['index']) 
+                                output_data = interpreter.get_tensor(output_details[0]['index'])
 
                                 print(output_data[0][0]/255*100,"% Kronkorken", output_data[0][1]/255*100,"% Metall", output_data[0][2]/255*100, "% Kunststoff")
-                                
+
                                 #Erstellung eines arrays zur Speicherung der Ergebnisse
 
                                 klasse = (output_data[0][0], output_data[0][1], output_data[0][2], 0)
@@ -121,72 +126,83 @@ class Sorting:
                                 #Ab 70% Erkennung werden die Deckel der Queue zugeordnet
                                 if klasse[0] > 180: # 180 entspricht ~70%
                                     self.q1.put(Kronkorken())
-                                    
+
                                 elif klasse[1] > 180: # 180 entspricht ~70%
                                     self.q1.put(Metall())
-                                    
+
                                 elif klasse[2] > 180: # 180 entspricht ~70%
                                     self.q1.put(Kunststoff())
-                                    
+
                                 else:
                                     self.q1.put(Ausschuss())
-                                    
+
                                 # Zylinder 3 ausfahren, wenn Klasse 0 zugeordnet
-                                a = self.q1.get()
+                                a = self.q1.get() # das älteste Element der Schlange q1 wird aus der Schlange genommen und in a gespeichert
                                 if a.get_pos_soll() == 1:
                                     self.machine.push_zyl_3()
+                                    self.zyl3 = self.zyl3 + 1
                                     self.machine.delay(2)
                                     self.machine.pull_zyl_3()
-                                    
-                                else: 
-                                    self.q2.put(a)
-                                    self.machine.start_belt_rl()
-                                    self.x = False
-                                    self.ls2() #Methode der Lichtschranke 2
-                                    if self.x:
-                                        self.ls1() #Methode der Lichtschranke 1
-                        
-                                break
-                            number = number +1
 
-                            break                                    
-                                                                  
-        def ls2(self):
+                                else:
+                                    self.q2.put(a) #Deckel wird in die nächste Schlange (q2) verschoben
+                                    self.machine.start_belt_rl()
+                                    self.x = False # Variable x wird auf false gesetzt (Default-Wert)
+                                    self.ls2() #Methode der Lichtschranke 2
+                                    if self.x: # Falls der Deckel in ls2() nicht vom Band geschoben wurde, ist x = True und ls1() wird durchlaufen
+                                        self.ls1() #Methode der Lichtschranke 1
+
+                                break
+                            number = number +1 # Hochzählen der Zählervariable zur Benennung der Deckel
+                            # Ausgabe der Füllstände in den drei Behältern
+                            print("Füllstände: Kronkorken:  " + str(zyl3))
+                            print("            Metall:      " + str(zyl2))
+                            print("            Kunststoff:  " + str(zyl2))
+
+                            break
+
+        def ls2(self): #Methode zum Ausfahren des Zylinders2 wenn Lichtschranke 2 triggert und es sich um einen Metalldeckel (=Sollposition 2) handelt
 
             while True:
 
                 if machine.get_ls_2():
-                    a = self.q2.get()
-                        
-                    if a.get_pos_soll()==2:
 
-                        print("ls2 if schleife")
+                    b = self.q2.get() # das älteste Element der Schlange q2 wird aus der Schlange genommen und in b gespeichert
+
+                    if b.get_pos_soll()==2:
+
                         self.machine.push_zyl_2()
+                        self.zyl2 = self.zyl2 + 1
                         self.machine.delay(2)
                         self.machine.pull_zyl_2()
                         break
-                    
+
                     else:
-                        
+
                         self.x = True #x gleich True setzen um in ls1 zu springen
                         self.q3.put(a)
                         break
                     break
-                        
-                
-        def ls1(self):
+
+
+        def ls1(self):  #Methode zum Ausfahren des Zylinders1 wenn Lichtschranke 1 triggert und es sich um einen Kunststoffdeckel (=Sollposition 3) handelt
 
             while True:
-                
+
                 if machine.get_ls_1():
-                    
-                    b = self.q3.get()
-                        
-                    if b.get_pos_soll()==3:
+
+                    c = self.q3.get()  # das älteste Element der Schlange q3 wird aus der Schlange genommen und in c gespeichert
+
+                    if c.get_pos_soll()==3:
 
                         self.machine.push_zyl_1()
+                        self.zyl1 = self.zyl1 + 1
                         self.machine.delay(2)
                         self.machine.pull_zyl_1()
+
+                        break
+
+                    else:       # Deckel mit der Soll-Pos 4 (Ausschuss) werden nicht vom Band geschoben und gelangen am Ende des Bandes in den Ausschuss-Behälter
 
                         break
 
