@@ -1,3 +1,5 @@
+# Anlegen der Klasse Maschine
+# Über die Methoden der Klasse Maschine lassen sich sämtliche Anlagenkomponenten steuern
 import time
 import cv2
 import RPi.GPIO as GPIO
@@ -61,6 +63,8 @@ class Machine:
         GPIO.output(self.K13, GPIO.LOW)   # Anschluss S1,  Beschaltung siehe Bedienungsanleitung
         GPIO.output(self.K14, GPIO.LOW)   # Anschluss S2,  Beschaltung siehe Bedienungsanleitung
         pass
+
+    # Methoden zur Ansteuerung der Anlagenkomponenten
 
     def get_ls_1(self):                     #falls Lichtschranke1 ausgelöst wird, wird True und ein Text zurückgegeben
         if GPIO.input(self.K1) == GPIO.HIGH :
@@ -266,16 +270,13 @@ class Machine:
 
     pass
 
-    def picture(self, index):                 #Automatische Erstellung der Bilder (Bild wird gemacht)
+    def picture(self, index):                 #Automatische Erstellung der Bilder (Bild wird gemacht ohne das Band zu stoppen)
 
 
         cap = cv2.VideoCapture(0)
 
         while True:
             ret, img = cap.read()
-            #cv2.imshow('Frame', img)
-            #cv2.imshow('Frame', img)
-            #cv2.imwrite('/home/pi/images/'+datetime.datetime.now().replace(microsecond=0).isoformat()+'.jpg', img)
             print('Bild ' +str(index)+ ' aufgenommen')
             return img
 
@@ -299,14 +300,14 @@ class Machine:
                 break
     pass
 
-    def delay(self,duration_in_seconds):
+    def delay(self,duration_in_seconds):    # Einbringung einer Verzögerung, verwendet als Alternative zur sleep-methode
         current_time = datetime.datetime.now()
         end_time = current_time + datetime.timedelta(0,duration_in_seconds)
         while current_time<end_time:
             current_time = datetime.datetime.now()
     pass
 
-    def param_ver(self):
+    def param_ver(self):                    # Methode zur Anpassung der Vereinzelungs-Parameter über das Hauptmenü
         while True:
             eingabe=input("Bitte geben Sie ihren Befehl ein, x zum verlassen!")
             if eingabe == "x":
