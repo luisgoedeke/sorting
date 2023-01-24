@@ -20,6 +20,8 @@ sorting = Sorting(m)
 
 root = Tk()
 
+root.title("Sortieranlage")
+
 button_func = Button(root, text="Funktionstest", width=40, height=2, font=120, bg="purple", command=m.ea_test)
 button_take_pictures = Button(root, text="Bilder aufnehmen", width=40, height=2, font=120, bg="purple", command=m.take_pictures)
 button_ver_start = Button(root, text="Vereinzelung starten", width=40, height=2, font=120, bg="green", command=m.start_ver)
