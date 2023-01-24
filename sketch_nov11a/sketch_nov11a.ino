@@ -2,8 +2,9 @@ int Distance = 0;
 String command;
 bool run_allowed = false;
 bool full_rot_allowed = false;
-int delaytime = 500;
-int steps = 1200;
+int delaytime = 100;
+int steps_rl = 2500;
+int steps_ll = 1500;
 int times_angle_rot = 0;
 int times_full_rot = 3600;
 int counter_full_rot = 0;
@@ -59,13 +60,19 @@ void serial(){
       command = "";
     }
 
-    if (command.startsWith("steps")){
-    command.remove(0,5);
-    steps = command.toInt();
+    if (command.startsWith("stepsrl")){
+    command.remove(0,7);
+    steps_rl = command.toInt();
     command = "";
   }
 
-      if (command.startsWith("delay")){
+    if (command.startsWith("stepsll")){
+    command.remove(0,7);
+    steps_rl = command.toInt();
+    command = "";
+  }
+
+    if (command.startsWith("delay")){
     command.remove(0,5);
     delaytime = command.toInt();
     command = "";
@@ -102,14 +109,14 @@ void loop() {
   serial();
   if (run_allowed){
     if (full_rot_allowed){
-      for(int i=0; i<steps;i++){
+      for(int i=0; i<steps_rl;i++){
         schritt_rl();
         //Serial.println("RL");
       }
       
       delay(delaytime);
       
-      for(int i=0; i<steps;i++){
+      for(int i=0; i<steps_ll;i++){
         schritt_ll();
         //Serial.println("LL");
       }
@@ -131,14 +138,14 @@ void loop() {
       delay(delaytime);
       
     }else{
-       for(int i=1; i<=steps; i++){
+       for(int i=1; i<=steps_rl; i++){
         schritt_rl();
         //Serial.println("RL");
       }
       
       delay(delaytime);
       
-      for(int i=1; i<=steps; i++){
+      for(int i=1; i<=steps_ll; i++){
         schritt_ll();
         //Serial.println("LL");
       }
