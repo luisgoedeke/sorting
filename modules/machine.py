@@ -359,7 +359,7 @@ class Machine:
         usb_ard.write(signal.encode())
     pass
 
-    def delay(self, number):                         #Verzögerungszeit
+    def delay_ver(self, number):                         #Verzögerungszeit
         usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
         time.sleep(1)
         usb_ard.flush()

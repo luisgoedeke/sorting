@@ -32,6 +32,9 @@ class Sorting:
             self.z1 = 0 #Zählervariable Anzahl Deckel Behälter 3 (Anzahl Ausfahren Zylinder 1)
             self.z2 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 2)
             self.z3 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 3)
+            self.zyl1 = 0
+            self.zyl2 = 0
+            self.zyl3 = 0
             pass
 
         #Hauptprogramm zur Vereinzelung
@@ -140,7 +143,7 @@ class Sorting:
                                 a = self.q1.get() # das älteste Element der Schlange q1 wird aus der Schlange genommen und in a gespeichert
                                 if a.get_pos_soll() == 1:
                                     self.machine.push_zyl_3()
-                                    self.zyl3 = self.zyl3 + 1
+                                    self.zyl3 += 1
                                     self.machine.delay(2)
                                     self.machine.pull_zyl_3()
 
@@ -155,9 +158,9 @@ class Sorting:
                                 break
                             number = number +1 # Hochzählen der Zählervariable zur Benennung der Deckel
                             # Ausgabe der Füllstände in den drei Behältern
-                            print("Füllstände: Kronkorken:  " + str(zyl3))
-                            print("            Metall:      " + str(zyl2))
-                            print("            Kunststoff:  " + str(zyl2))
+                            print("Füllstände: Kronkorken:  " + str(self.zyl3))
+                            print("            Metall:      " + str(self.zyl2))
+                            print("            Kunststoff:  " + str(self.zyl1))
 
                             break
 
@@ -172,7 +175,7 @@ class Sorting:
                     if b.get_pos_soll()==2:
 
                         self.machine.push_zyl_2()
-                        self.zyl2 = self.zyl2 + 1
+                        self.zyl2 += 1
                         self.machine.delay(2)
                         self.machine.pull_zyl_2()
                         break
@@ -180,7 +183,7 @@ class Sorting:
                     else:
 
                         self.x = True #x gleich True setzen um in ls1 zu springen
-                        self.q3.put(a)
+                        self.q3.put(b)
                         break
                     break
 
@@ -196,7 +199,7 @@ class Sorting:
                     if c.get_pos_soll()==3:
 
                         self.machine.push_zyl_1()
-                        self.zyl1 = self.zyl1 + 1
+                        self.zyl1 += 1
                         self.machine.delay(2)
                         self.machine.pull_zyl_1()
 
