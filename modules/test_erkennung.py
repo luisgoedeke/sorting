@@ -1,3 +1,6 @@
+# Programm zum Testen der Bilderkennung (bzw. des TFLite models)
+# Einlesen der bearbeiteten Bilder und des TFLite models 
+# Ausgabe der Klassifizierung (Angabe jeweils in %)
 import os
 import numpy as np
 import tflite_runtime.interpreter as tflite
@@ -34,6 +37,5 @@ for file in pathlib.Path("/home/pi/images/bilder bearbeitet/kronkorken/cc").iter
     # output_details[0]['index'] = the index which provides the input
     output_data = interpreter.get_tensor(output_details[0]['index']) 
     
-    #print("For file {}, the output is {}".format(file.stem, output_data))
-    #print(output_data)
+    # Ausgabe der Klassifizierung (Angabe jeweils in % umgerechnet)
     print(output_data[0][0]/255*100,"% Kronkorken", output_data[0][1]/255*100,"% Metall", output_data[0][2]/255*100, "% Kunststoff")
