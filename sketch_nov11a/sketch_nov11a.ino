@@ -2,7 +2,7 @@ int Distance = 0;
 String command;
 bool run_allowed = false;
 bool full_rot_allowed = false;
-int delaytime = 100;
+int delaytime = 200;
 int steps_rl = 2500;
 int steps_ll = 1500;
 int times_angle_rot = 0;
