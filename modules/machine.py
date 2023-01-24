@@ -144,18 +144,7 @@ class Machine:
         print("Förderband aus")
         pass
 
-    def start_ver(self):                    #Start des Motors für die Vereinzelung
-        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
-        time.sleep(1)
-        usb_ard.flush()
-        usb_ard.write(b"start\n")
 
-
-    def stop_ver(self):                     #Stopp des Motors für die Vereinzelung
-        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
-        time.sleep(1)
-        usb_ard.flush()
-        usb_ard.write(b"stop\n")
 
     def push_zyl_1(self):                   #Ausfahren des 1 Zylinders
 
@@ -307,6 +296,9 @@ class Machine:
             current_time = datetime.datetime.now()
     pass
 
+    # Methoden zum Anpassen der Vereinzelungs-Parameter:
+
+
     def param_ver(self):                    # Methode zur Anpassung der Vereinzelungs-Parameter über das Hauptmenü
         while True:
             eingabe=input("Bitte geben Sie ihren Befehl ein, x zum verlassen!")
@@ -317,4 +309,68 @@ class Machine:
                 time.sleep(1)
                 usb_ard.flush()
                 usb_ard.write(eingabe.encode())
+    pass
+
+
+    def start_ver(self):                    #Start des Motors für die Vereinzelung
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        usb_ard.write(b"start\n")
+    pass
+
+
+    def stop_ver(self):                     #Stopp des Motors für die Vereinzelung
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        usb_ard.write(b"stop\n")
+    pass
+
+    def allow_full_rot(self):                     #Ganze Umdrehungen erlauben
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        usb_ard.write(b"allow_full_rot\n")
+    pass
+
+    def n_allow_full_rot(self):                     #Ganze Umdrehungen verbieten
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        usb_ard.write(b"n_allow_full_rot\n")
+    pass
+
+    def steps_rl(self, number):                     #Anzahl Schritte in Rechtslauf
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        #number = str(number)
+        signal = "stepsrl" + number
+        usb_ard.write(signal.encode())
+    pass
+
+    def steps_ll(self, number):                     #Anzahl Schritte in Linkslauf
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        #number = str(number)
+        signal = "stepsll" + number
+        usb_ard.write(signal.encode())
+    pass
+
+    def delay(self, number):                         #Verzögerungszeit
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        signal = "delay" + number
+        usb_ard.write(signal.encode())
+    pass
+
+    def times_full_rot(self, number):                 #Anzahl ganzer Umdrehungen
+        usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
+        time.sleep(1)
+        usb_ard.flush()
+        signal = "times_full_rot" + number
+        usb_ard.write(signal.encode())
     pass
