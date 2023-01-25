@@ -56,59 +56,63 @@ class Sorting:
 
 
 
-            lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-            l_channel, a, b = cv2.split(lab)
+        lab= cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+        l_channel, a, b = cv2.split(lab)
 
-            clahe = cv2.createCLAHE(clipLimit=2.7, tileGridSize=(8,8))
-            cl = clahe.apply(l_channel)
+        clahe = cv2.createCLAHE(clipLimit=2.7, tileGridSize=(8,8))
+        cl = clahe.apply(l_channel)
 
-            limg = cv2.merge((cl,a,b))
+        limg = cv2.merge((cl,a,b))
 
-            enhanced_img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+        enhanced_img = cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
 
-            gamma = 0.95
-            img = np.power(enhanced_img, gamma)
-            img = color.rgb2gray(img)
+        gamma = 0.95
+        img = np.power(enhanced_img, gamma)
+        img = color.rgb2gray(img)
 
-            cv2.imwrite('/home/pi/images/Aufnahmen/' + str(number) + '.jpg',img) #Bild speichern
-            print("Bild bearbeitet")
+        cv2.imwrite('/home/pi/images/Aufnahmen/' + str(number) + '.jpg',img) #Bild speichern
+            #cv2.imwrite('/home/pi/images/Aufnahmen/test.jpg',img) #Bild speichern
+        print("Bild bearbeitet")
 
             # Deckel erkennen
 
             # Load TFLite model
-            interpreter = tflite.Interpreter(model_path="/home/pi/images/bilder bearbeitet/model.tflite")
+        interpreter = tflite.Interpreter(model_path="/home/pi/images/bilder bearbeitet/model.tflite")
 
             # Get input and output tensors
-            input_details = interpreter.get_input_details()
-            output_details = interpreter.get_output_details()
+        input_details = interpreter.get_input_details()
+        output_details = interpreter.get_output_details()
 
-            interpreter.allocate_tensors()
+        interpreter.allocate_tensors()
 
-            self.machine.delay(1)
+        self.machine.delay(1)
 
             # Das aufgenommene Bild wird klassifiziert
 
             # Bild einlesen
-            img = cv2.imread("/home/pi/images/Aufnahmen/"+ str(number)+ '.jpg'.format(file.resolve()))
+        #for file in pathlib.Path("/home/pi/images/Aufnahmen/").interdir():
+        img = cv2.imread('/home/pi/images/Aufnahmen/' + str(number) + '.jpg')
+
 
             #Auflösung ändern
-            new_img = cv2.resize(img, (224, 224))
+        new_img = cv2.resize(img, (224, 224))
 
             # input_details[0]['index'] = the index which accepts the input
-            interpreter.set_tensor(input_details[0]['index'], [new_img])
+        interpreter.set_tensor(input_details[0]['index'], [new_img])
 
             # run the inference
-            interpreter.invoke()
+        interpreter.invoke()
 
             # output_details[0]['index'] = the index which provides the input
-            output_data = interpreter.get_tensor(output_details[0]['index'])
+        output_data = interpreter.get_tensor(output_details[0]['index'])
 
-            print(output_data[0][0]/255*100,"% Kronkorken", output_data[0][1]/255*100,"% Metall", output_data[0][2]/255*100, "% Kunststoff")
+        print(output_data[0][0]/255*100,"% Kronkorken", output_data[0][1]/255*100,"% Metall", output_data[0][2]/255*100, "% Kunststoff")
 
             #Erstellung eines arrays zur Speicherung der Ergebnisse
-            classification = (output_data[0][0], output_data[0][1], output_data[0][2], 0)
-            return classification
-
+        classification = (output_data[0][0], output_data[0][1], output_data[0][2], 0)
+        print(classification)
+        return classification
+    
     def classify_threshold(self):
         number  = 0
         img = self.machine.picture(number) # Bild aufnehmen
@@ -121,11 +125,11 @@ class Sorting:
                 break
             except:
                 img = self.machine.picture(number) #erneute Aufnahme
-
-
+                
+        cv2.imwrite('/home/pi/images/Aufnahmen/' + str(number) + '.jpg',img)
+        img = cv2.imread('/home/pi/images/Aufnahmen/' + str(number) + '.jpg',0)
 
         img = cv2.medianBlur(img,5)
-
 
         #Das sind addaptive Methoden, die den optimalen Threshold selber finden 
         ret,th1 = cv2.threshold(img,127,255,cv2.THRESH_BINARY)
@@ -133,15 +137,17 @@ class Sorting:
         th3 = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,11,2)
         titles = ['Original Image', 'Global Thresholding (v = 127)', 'Adaptive Mean Thresholding', 'Adaptive Gaussian Thresholding']
 
-        cv2.imwrite('/home/pi/images/Aufnahmen/' + str(number) + '.jpg',img) #Bild speichern
+
+        cv2.imwrite('/home/pi/images/Aufnahmen/' + str(number) + '.jpg',th3) #Bild speichern
+            #cv2.imwrite('/home/pi/images/Aufnahmen/test.jpg',img) #Bild speichern
         print("Bild bearbeitet")
 
-        # Deckel erkennen
+            # Deckel erkennen
 
-        # Load TFLite model
-        interpreter = tflite.Interpreter(model_path="/home/pi/images/bilder bearbeitet/model.tflite")
+            # Load TFLite model
+        interpreter = tflite.Interpreter(model_path="/home/pi/Documents/sorting/models/quantized/model.tflite")
 
-        # Get input and output tensors
+            # Get input and output tensors
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()
 
@@ -149,27 +155,30 @@ class Sorting:
 
         self.machine.delay(1)
 
-        # Das aufgenommene Bild wird klassifiziert
+            # Das aufgenommene Bild wird klassifiziert
 
-        # Bild einlesen
-        img = cv2.imread("/home/pi/images/Aufnahmen/"+ str(number)+ '.jpg'.format(file.resolve()))
+            # Bild einlesen
+        #for file in pathlib.Path("/home/pi/images/Aufnahmen/").interdir():
+        img = cv2.imread('/home/pi/images/Aufnahmen/' + str(number) + '.jpg')
 
-        #Auflösung ändern
-        #new_img = cv2.resize(img, (224, 224))
 
-        # input_details[0]['index'] = the index which accepts the input
-        interpreter.set_tensor(input_details[0]['index'], [img])
+            #Auflösung ändern
+        new_img = cv2.resize(img, (224, 224))
+        #img = img.float
+            # input_details[0]['index'] = the index which accepts the input
+        interpreter.set_tensor(input_details[0]['index'], [new_img])
 
-        # run the inference
+            # run the inference
         interpreter.invoke()
 
-        # output_details[0]['index'] = the index which provides the input
+            # output_details[0]['index'] = the index which provides the input
         output_data = interpreter.get_tensor(output_details[0]['index'])
 
         print(output_data[0][0]/255*100,"% Kronkorken", output_data[0][1]/255*100,"% Metall", output_data[0][2]/255*100, "% Kunststoff")
 
-        #Erstellung eines arrays zur Speicherung der Ergebnisse
+            #Erstellung eines arrays zur Speicherung der Ergebnisse
         classification = (output_data[0][0], output_data[0][1], output_data[0][2], 0)
+        print(classification)
         return classification
 
     def sort(self):
@@ -194,6 +203,7 @@ class Sorting:
                         
 
                         klasse = self.classify()
+                        print(klasse)
 
                         #Ab 70% Erkennung werden die Deckel der Queue zugeordnet
                         if klasse[0] > 180: # 180 entspricht ~70%
@@ -224,7 +234,7 @@ class Sorting:
                             if self.x: # Falls der Deckel in ls2() nicht vom Band geschoben wurde, ist x = True und ls1() wird durchlaufen
                                 self.ls1() #Methode der Lichtschranke 1
 
-                            break
+                            #break
                         number = number +1 # Hochzählen der Zählervariable zur Benennung der Deckel
                         # Ausgabe der Füllstände in den drei Behältern
                         print("Füllstände: Kronkorken:  " + str(self.zyl3))
