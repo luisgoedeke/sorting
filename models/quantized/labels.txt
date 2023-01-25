@@ -1,0 +1,3 @@
+0 Metall
+1 Kunststoff
+2 Kronkorken
