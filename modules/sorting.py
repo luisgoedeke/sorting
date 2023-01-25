@@ -28,13 +28,11 @@ class Sorting:
         self.q2 = queue.Queue()
         self.q3 = queue.Queue()
         self.machine = m
-        self.x = False
-        self.z1 = 0 #Zählervariable Anzahl Deckel Behälter 3 (Anzahl Ausfahren Zylinder 1)
-        self.z2 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 2)
-        self.z3 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 3)
-        self.zyl1 = 0
-        self.zyl2 = 0
-        self.zyl3 = 0
+        self.x = False       
+        self.ausschuss = 0 #Zählervariable Ausschuss
+        self.zyl1 = 0 #Zählervariable Anzahl Deckel Behälter 3 (Anzahl Ausfahren Zylinder 1)
+        self.zyl2 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 2)
+        self.zyl3 = 0 #self.z3 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 3)
         self.sorting_allowed = True
         self.run_belt_allowed = False
         pass
@@ -178,8 +176,11 @@ class Sorting:
 
             #Erstellung eines arrays zur Speicherung der Ergebnisse
         classification = (output_data[0][0], output_data[0][1], output_data[0][2], 0)
-        print(classification)
+        #print(classification)
         return classification
+    
+    def classify_ausschuss(self):
+        return (150, 150, 150, 0)
 
     def sort(self):
             number = 0 #Zählervariable zur Benennung der Deckel
@@ -203,7 +204,7 @@ class Sorting:
                         
 
                         klasse = self.classify()
-                        print(klasse)
+                        #print(klasse)
 
                         #Ab 70% Erkennung werden die Deckel der Queue zugeordnet
                         if klasse[0] > 180: # 180 entspricht ~70%
@@ -240,6 +241,8 @@ class Sorting:
                         print("Füllstände: Kronkorken:  " + str(self.zyl3))
                         print("            Metall:      " + str(self.zyl2))
                         print("            Kunststoff:  " + str(self.zyl1))
+                        print("            Ausschuss:   " + str(self.ausschuss))
+                  
 
                         break
 
@@ -285,7 +288,5 @@ class Sorting:
                     break
 
                 else:       # Deckel mit der Soll-Pos 4 (Ausschuss) werden nicht vom Band geschoben und gelangen am Ende des Bandes in den Ausschuss-Behälter
-
+                    self.ausschuss += 1
                     break
-
-                break
