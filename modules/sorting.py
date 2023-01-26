@@ -15,6 +15,7 @@ machine = Machine()
 import pathlib
 import tflite_runtime.interpreter as tflite
 import queue
+from tkinter import *
 from threading import Thread
 
 
@@ -35,8 +36,11 @@ class Sorting:
         self.zyl3 = 0 #self.z3 = 0 #Zählervariable Anzahl Deckel Behälter 2 (Anzahl Ausfahren Zylinder 3)
         self.sorting_allowed = True
         self.run_belt_allowed = False
+        
         pass
 
+    def deny_permission(self):
+        self.sorting_allowed = False
     #Hauptprogramm zur Vereinzelung
 
     def classify(self):
@@ -238,10 +242,26 @@ class Sorting:
                             #break
                         number = number +1 # Hochzählen der Zählervariable zur Benennung der Deckel
                         # Ausgabe der Füllstände in den drei Behältern
+                        
+                        if (self.zyl3 == 15):
+                            print("Behälter mit Kronkorken ist voll, bitte entleeren und Sortierung neu starten")
+                            self.sorting_allowed = False
+                        
+                        if (self.zyl2 == 10):
+                            print("Behälter mit Metall ist voll, bitte entleeren und Sortierung neu starten")
+                            self.sorting_allowed = False
+                            
+                        if (self.zyl1 == 10):
+                            print("Behälter mit Kunststoff ist voll, bitte entleeren und Sortierung neu starten")
+                            self.sorting_allowed = False
+                            
+
                         print("Füllstände: Kronkorken:  " + str(self.zyl3))
                         print("            Metall:      " + str(self.zyl2))
                         print("            Kunststoff:  " + str(self.zyl1))
                         print("            Ausschuss:   " + str(self.ausschuss))
+                        
+                        self.machine.stop_belt()
                   
 
                         break

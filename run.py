@@ -13,29 +13,42 @@ sys.path.insert(0, './modules')
 from machine import *
 from sorting import *
 from lid import *
-from stepper_param import *
 from datetime import date
 
-def stepper_param():
+m = Machine()
+sorting = Sorting(m)
+
+def stepper_param():#Funktioniert derzeit noch nicht, soll jedoch auf Dauer eine GUI bereitstellen um Parameter übertragen zu können
     param = Toplevel(root)
     param.title = "Parameter Schrittmotor"
     param.geometry("600x400")
+    
 
+    
     steps_rl_label = Label(param, text = "Schritte Rechtslauf").place(x = 10,y = 40)
     steps_ll_label = Label(param, text = "Schritte Linkslauf").place(x = 10, y = 80)
     delay_label = Label(param, text = "Verzögerung [ms]").place(x = 10, y = 120)
     times_full_rot_label = Label(param, text = "Anzahl volle Umdrehungen").place(x = 10, y = 160)
-    steps_rl = Entry(param).place(x = 200, y = 40)
-    steps_ll = Entry(param).place(x = 200, y = 80)
-    delay = Entry(param).place(x = 200, y = 120)
-    times_full_rot = Entry(param).place(x = 200, y = 160)
-    steps_rl_button = Button(param, text= "Übernehmen").place(x = 400, y = 35)
+    steps_rl = Entry(param)
+    steps_rl.place(x = 200, y = 40)
+    steps_ll = Entry(param)
+    steps_ll.place(x = 200, y = 80)
+    delay = Entry(param)
+    delay.place(x = 200, y = 120)
+    times_full_rot = Entry(param)
+    times_full_rot.place(x = 200, y = 160)
+    
+    def change_steps_rl():
+        a = steps_rl.get()
+        print(a)
+        m.steps_rl(a)
+    
+    steps_rl_button = Button(param, text= "Übernehmen", command = change_steps_rl).place(x = 400, y = 35)
     steps_ll_button = Button(param, text= "Übernehmen").place(x = 400, y = 75)
     delay_button = Button(param, text= "Übernehmen").place(x = 400, y = 115)
     times_full_rot_button = Button(param, text= "Übernehmen").place(x = 400, y = 155)
-
-m = Machine()
-sorting = Sorting(m)
+    
+        
 
 root = Tk()
 
@@ -45,7 +58,7 @@ button_func = Button(root, text="Funktionstest", width=40, height=2, font=120, b
 button_take_pictures = Button(root, text="Bilder aufnehmen", width=40, height=2, font=120, bg="purple", command=m.take_pictures)
 button_ver_start = Button(root, text="Vereinzelung starten", width=40, height=2, font=120, bg="green", command=m.start_ver)
 button_ver_stop = Button(root, text="Vereinzelung stoppen", width=40, height=2, font=120, bg="red", command=m.stop_ver)
-button_para_ver = Button(root, text="Vereinzelung Parameter", width=40, height=2, font=120, bg="yellow", command=stepper_param)
+button_para_ver = Button(root, text="Vereinzelung Parameter", width=40, height=2, font=120, bg="yellow", command=m.param_ver)
 button_belt_start = Button(root, text="Band starten", width=40, height=2, font=120, bg="green", command=m.start_belt_rl)
 button_belt_stop = Button(root, text="Band stoppen", width=40, height=2, font=120, bg="red", command=m.stop_belt)
 button_sort_start = Button(root, text="Sortierung starten", width=40, height=2, font=120, bg="green", command=sorting.sort)

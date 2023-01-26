@@ -345,9 +345,9 @@ class Machine:
         usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
         time.sleep(1)
         usb_ard.flush()
-        #number = str(number)
-        signal = "stepsrl" + number
+        signal = "stepsrl" + str(number)
         usb_ard.write(signal.encode())
+        print("Übertragen")
     pass
 
     def steps_ll(self, number):                     #Anzahl Schritte in Linkslauf
@@ -363,7 +363,7 @@ class Machine:
         usb_ard = serial.Serial('/dev/ttyUSB0', 9600)
         time.sleep(1)
         usb_ard.flush()
-        signal = "delay" + number
+        signal = "delay" + number +"\n"
         usb_ard.write(signal.encode())
     pass
 
